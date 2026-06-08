@@ -2,6 +2,7 @@ import requests
 from os import system
 import sys
 import time
+import shutil
 
 def convert(s):
     try:
@@ -13,13 +14,42 @@ def convert(s):
     except:
         return "0 Day 0 Hour 0 Min 0 Sec"
 
-# অক্ষরর টইপ অ্যনমশনর জন্য ফশন
-def animate_print(text, speed=0.001):
+# Function for typewriter animation effect with custom speed controls
+def animate_print(text, speed=0.03):
     for char in text:
         sys.stdout.write(char)
         sys.stdout.flush()
         time.sleep(speed)
     print()
+
+# Function to center-align and display the welcome box (Kept fast for impact)
+def show_welcome_box():
+    system('clear')
+    G = '\033[92m'  # Neon Green
+    X = '\033[0m'   # Reset
+    
+    try:
+        columns = shutil.get_terminal_size().columns
+    except:
+        columns = 80
+
+    lines = [
+        " ┌───────────────────────────────────────────┐",
+        "│         「 BLACK TOOL STARTED 」          │",
+        "│      「 HELLO DEAR USER I'M SAKIB 」      │",
+        "│       「 BLACK TOOL WILL PROTECT YOU 」   │",
+        "│              「 GOODBYE 」                │",
+        "│          「 ENJOY OUR BLACK TOOL」        │",
+        " └───────────────────────────────────────────┘"
+    ]
+    
+    print("\n" * 3) 
+    for line in lines:
+        centered_line = line.center(columns)
+        animate_print(f"{G}{centered_line}{X}", speed=0.01) # Faster speed for welcome box
+    
+    print("\n" * 2)
+    time.sleep(2) 
 
 def is_success(rsp):
     """Check if the API response is truly successful without any nested errors"""
@@ -53,7 +83,6 @@ def show_res(rsp_json):
         err_node = rsp_json.get('error')
         data_node = rsp_json.get('data', {})
 
-        # 1. Check if error is inside the 'error' dictionary
         if isinstance(err_node, dict):
             g_resp = err_node.get('garena_response', {})
             if isinstance(g_resp, dict) and g_resp.get('error'):
@@ -64,41 +93,36 @@ def show_res(rsp_json):
                 error_msg = err_node.get('message')
             else:
                 error_msg = str(err_node)
-        # 2. Check if error is a direct string
         elif isinstance(err_node, str):
             error_msg = err_node
             
-        # 3. Check inside 'data' node if error still not found
         if not error_msg and isinstance(data_node, dict):
             if data_node.get('error'):
                 error_msg = data_node.get('error')
             elif isinstance(data_node.get('garena_response'), dict) and data_node['garena_response'].get('error'):
                 error_msg = data_node['garena_response']['error']
                 
-        # 4. Fallback (Direct Garena Response Error Check)
         if not error_msg:
             g_resp = rsp_json.get('garena_response', {})
             if isinstance(g_resp, dict) and g_resp.get('error'):
                 error_msg = g_resp.get('error')
 
-        # 5. Fallback Default
         if not error_msg and not rsp_json.get('success'):
             error_msg = rsp_json.get('message') or "Unknown Error"
 
         if error_msg:
-            animate_print(f"- FaiLEd ! Error : {error_msg}")
+            animate_print(f"- FaiLEd ! Error : {error_msg}", speed=0.03)
         else:
-            animate_print("- SuccEss !")
+            animate_print("- SuccEss !", speed=0.03)
             
-        # Displaying globally fetched API Credits
-        animate_print(f"- DevELopEr : {GLOBAL_MAKER}")
-        animate_print(f"- TeleGraM  : {GLOBAL_CHANNEL}\n")
+        animate_print(f"- DevELopEr : {GLOBAL_MAKER}", speed=0.03)
+        animate_print(f"- TeleGraM  : {GLOBAL_CHANNEL}\n", speed=0.03)
     except:
-        animate_print("- FaiLEd ! InvaLid ResPonsE\n")
+        animate_print("- FaiLEd ! InvaLid ResPonsE\n", speed=0.03)
 
 
 GLOBAL_MAKER = "black"
-GLOBAL_CHANNEL = "https://t.me/sakibblack" # পর্সনল টলগ্রম আইড লক সট কর হয়ছ
+GLOBAL_CHANNEL = "https://t.me/sakibblack" 
 
 def fetch_api_credits():
     global GLOBAL_MAKER, GLOBAL_CHANNEL
@@ -114,7 +138,7 @@ def fetch_api_credits():
     except:
         pass 
 
-# সুন্দর কলর কম্বনশন সহ ব্যনর ডসপ্ল ফশন
+# Banner display function with smooth typewriter effect
 def display_banner(with_animation=False):
     G = '\033[92m'  # Neon Green
     R = '\033[91m'  # Blood Red
@@ -126,10 +150,10 @@ def display_banner(with_animation=False):
     lines = [
         f"{G}==========================================================================",
         f"{C} _____   _          _       ____   _  __",
-        f"{C}| __ )  | |        / \\     / ___| | |/ /",
-        f"{G}|  _ \\  | |       / _ \\   | |     | ' / ",
-        f"{G}| |_) | | |___   / ___ \\  | |___  | . \\ ",
-        f"{C}|____/  |_____| /_/   \\_\\  \\____| |_|\\_\\  {R}[ WARNING: UNLEASHED ]",
+        f"{C}| __ )  | |        / \     / ___| | |/ /",
+        f"{G}|  _ \  | |       / _ \   | |     | ' / ",
+        f"{G}| |_) | | |___   / ___ \  | |___  | . \ ",
+        f"{C}|____/  |_____| /_/   \_\  \____| |_|\_\  {R}[ WARNING: UNLEASHED ]",
         f"{G}==========================================================================",
         f"          {R}[ {W}DEVELOPER: {Y}{GLOBAL_MAKER} {R}| {W}TELEGRAM CONTACT: {C}{GLOBAL_CHANNEL} {R}]{G}",
         f"=========================================================================={X}"
@@ -137,7 +161,7 @@ def display_banner(with_animation=False):
 
     if with_animation:
         for line in lines:
-            animate_print(line, speed=0.002)
+            animate_print(line, speed=0.02) # Controlled smooth animation for banner
     else:
         for line in lines:
             print(line)
@@ -169,7 +193,7 @@ def ChanGE_BinD_WiTh_Sec(access):
                 
                 if is_success(rsp_c):
                     show_res(rsp_c.json())
-                    animate_print(f'\033[92m- SuccesFuLy ChanGEd To : {email} !\033[0m')
+                    animate_print(f'\033[92m- SuccesFuLy ChanGEd To : {email} !\033[0m', speed=0.03)
                 else:
                     show_res(rsp_c.json())
             else:
@@ -178,7 +202,7 @@ def ChanGE_BinD_WiTh_Sec(access):
             show_res(rsp_v.json())
     else:
         try: show_res(rsp.json())
-        except: animate_print(f'- FaiLEd ! HTTP : {rsp.status_code}')
+        except: animate_print(f'- FaiLEd ! HTTP : {rsp.status_code}', speed=0.03)
 
 def ChanGE_BinD_No_Sec(access):
     cur_email = input('\033[92m- EnTer CurrenT EmaiL : \033[0m')
@@ -212,7 +236,7 @@ def ChanGE_BinD_No_Sec(access):
                     
                     if is_success(rsp5):
                         show_res(rsp5.json())
-                        animate_print('\033[92m- SuccesFuLy ForGoT SecuriTy CodE !\033[0m')
+                        animate_print('\033[92m- SuccesFuLy ForGoT SecuriTy CodE !\033[0m', speed=0.03)
                     else:
                         show_res(rsp5.json())
                 else:
@@ -223,12 +247,12 @@ def ChanGE_BinD_No_Sec(access):
             show_res(rsp2.json())
     else:
         try: show_res(rsp1.json())
-        except: animate_print(f'- FaiLEd ! HTTP : {rsp1.status_code}')
+        except: animate_print(f'- FaiLEd ! HTTP : {rsp1.status_code}', speed=0.03)
 
 def Bind_Change_Flow(access):
-    animate_print("\n\033[96m- Do you havE your currenT SecuriTy CodE ?\033[0m")
-    animate_print("\033[96m- EnTer 'y' for YEs (ChanGE wiTh SecuriTy CodE)\033[0m")
-    animate_print("\033[96m- EnTer 'n' for No  (ForGeT / REsET SecuriTy CodE)\033[0m")
+    animate_print("\n\033[96m- Do you havE your currenT SecuriTy CodE ?\033[0m", speed=0.03)
+    animate_print("\033[96m- EnTer 'y' for YEs (ChanGE wiTh SecuriTy CodE)\033[0m", speed=0.03)
+    animate_print("\033[96m- EnTer 'n' for No  (ForGeT / REsET SecuriTy CodE)\033[0m", speed=0.03)
     ch = input('\n\033[92m- ChoosE (y/n) : \033[0m').strip().lower()
     
     if ch == 'y':
@@ -238,7 +262,7 @@ def Bind_Change_Flow(access):
         print()
         ChanGE_BinD_No_Sec(access)
     else:
-        animate_print('\033[91m- InvaLid ChoicE !\033[0m')
+        animate_print('\033[91m- InvaLid ChoicE !\033[0m', speed=0.03)
 
 def UnBinD_WiTh_Sec(access):
     sec = input('\033[92m- EnTer SecuriTy CodE : \033[0m')
@@ -247,10 +271,10 @@ def UnBinD_WiTh_Sec(access):
     
     if is_success(rsp):
         show_res(rsp.json())
-        animate_print('\033[92m- UnBinD REquEsT CrEaTEd SuccesFuLy! 15 Days Timer STrarTEd.\033[0m')
+        animate_print('\033[92m- UnBinD REquEsT CrEaTEd SuccesFuLy! 15 Days Timer STrarTEd.\033[0m', speed=0.03)
     else:
         try: show_res(rsp.json())
-        except: animate_print(f'- FaiLEd ! HTTP : {rsp.status_code}')
+        except: animate_print(f'- FaiLEd ! HTTP : {rsp.status_code}', speed=0.03)
 
 def UnBinD_No_Sec(access):
     cur_email = input('\033[92m- EnTer CurrenT EmaiL : \033[0m')
@@ -272,19 +296,19 @@ def UnBinD_No_Sec(access):
             
             if is_success(rsp3):
                 show_res(rsp3.json())
-                animate_print('\033[92m- UnBinD REquEsT CrEaTEd SuccesFuLy! 15 Days Timer STrarTEd.\033[0m')
+                animate_print('\033[92m- UnBinD REquEsT CrEaTEd SuccesFuLy! 15 Days Timer STrarTEd.\033[0m', speed=0.03)
             else:
                 show_res(rsp3.json())
         else:
             show_res(rsp2.json())
     else:
         try: show_res(rsp1.json())
-        except: animate_print(f'- FaiLEd ! HTTP : {rsp1.status_code}')
+        except: animate_print(f'- FaiLEd ! HTTP : {rsp1.status_code}', speed=0.03)
 
 def Unbind_Flow(access):
-    animate_print("\n\033[96m- Do you havE your currenT SecuriTy CodE ?\033[0m")
-    animate_print("\033[96m- EnTer 'y' for YEs (UnBinD wiTh SecuriTy CodE)\033[0m")
-    animate_print("\033[96m- EnTer 'n' for No  (ForGoT SecuriTy CodE / OTP)\033[0m")
+    animate_print("\n\033[96m- Do you havE your currenT SecuriTy CodE ?\033[0m", speed=0.03)
+    animate_print("\033[96m- EnTer 'y' for YEs (UnBinD wiTh SecuriTy CodE)\033[0m", speed=0.03)
+    animate_print("\033[96m- EnTer 'n' for No  (ForGoT SecuriTy CodE / OTP)\033[0m", speed=0.03)
     ch = input('\n\033[92m- ChoosE (y/n) : \033[0m').strip().lower()
     
     if ch == 'y':
@@ -294,7 +318,7 @@ def Unbind_Flow(access):
         print()
         UnBinD_No_Sec(access)
     else:
-        animate_print('\033[91m- InvaLid ChoicE !\033[0m')
+        animate_print('\033[91m- InvaLid ChoicE !\033[0m', speed=0.03)
 
 def ChK(access):
     url = "https://bindinfocrownx612.vercel.app/check"
@@ -304,19 +328,19 @@ def ChK(access):
         inner_data = data.get("data", {}) if data.get("data") else data
         
         print("")
-        animate_print(f"- sTaTus : {inner_data.get('status', '')}")
-        animate_print(f"- sTaTus_codE : {inner_data.get('status_code', '')}")
-        animate_print(f"- summary : {inner_data.get('summary', '')}")
-        animate_print(f"- counTdown_human : {inner_data.get('countdown_human', '')}")
-        animate_print(f"- counTdown_sEconds : {inner_data.get('countdown_seconds', '')}")
-        animate_print(f"- currenT_EmaiL : {inner_data.get('current_email', '')}")
-        animate_print(f"- pEndinG_EmaiL : {inner_data.get('pending_email', '')}")
-        animate_print(f"- EmaiL_To_bE : {inner_data.get('email_to_be', '')}")
-        animate_print(f"- mobiLE : {inner_data.get('mobile', '')}")
-        animate_print(f"- rEquEsT_ExEc_counTdown : {inner_data.get('request_exec_countdown', '')}")
-        animate_print(f"- rEsuLT : {inner_data.get('result', '')}")
-        animate_print(f"- EmaiL : {inner_data.get('email', '')}")
-        animate_print(f"- mobiLE_To_bE : {inner_data.get('mobile_to_be', '')}")
+        animate_print(f"- sTaTus : {inner_data.get('status', '')}", speed=0.03)
+        animate_print(f"- sTaTus_codE : {inner_data.get('status_code', '')}", speed=0.03)
+        animate_print(f"- summary : {inner_data.get('summary', '')}", speed=0.03)
+        animate_print(f"- counTdown_human : {inner_data.get('countdown_human', '')}", speed=0.03)
+        animate_print(f"- counTdown_sEconds : {inner_data.get('countdown_seconds', '')}", speed=0.03)
+        animate_print(f"- currenT_EmaiL : {inner_data.get('current_email', '')}", speed=0.03)
+        animate_print(f"- pEndinG_EmaiL : {inner_data.get('pending_email', '')}", speed=0.03)
+        animate_print(f"- EmaiL_To_bE : {inner_data.get('email_to_be', '')}", speed=0.03)
+        animate_print(f"- mobiLE : {inner_data.get('mobile', '')}", speed=0.03)
+        animate_print(f"- rEquEsT_ExEc_counTdown : {inner_data.get('request_exec_countdown', '')}", speed=0.03)
+        animate_print(f"- rEsuLT : {inner_data.get('result', '')}", speed=0.03)
+        animate_print(f"- EmaiL : {inner_data.get('email', '')}", speed=0.03)
+        animate_print(f"- mobiLE_To_bE : {inner_data.get('mobile_to_be', '')}", speed=0.03)
         
         email = inner_data.get("email", "")
         email_to_be = inner_data.get("email_to_be", "")
@@ -324,28 +348,28 @@ def ChK(access):
         
         print("")
         if email == "" and email_to_be != "":
-            animate_print(f"- ConFirmEd in : {convert(countdown)}")
+            animate_print(f"- ConFirmEd in : {convert(countdown)}", speed=0.03)
         elif email != "" and email_to_be == "":
-            animate_print(f"- ConFirmEd : YEs Good !")
+            animate_print(f"- ConFirmEd : YEs Good !", speed=0.03)
         elif email == "" and email_to_be == "":
-            animate_print(f"- No IsTi3ada !")
+            animate_print(f"- No IsTi3ada !", speed=0.03)
             
         print("")
-        animate_print(f"- DevELopEr : {GLOBAL_MAKER}")
-        animate_print(f"- TeleGraM  : {GLOBAL_CHANNEL}")
+        animate_print(f"- DevELopEr : {GLOBAL_MAKER}", speed=0.03)
+        animate_print(f"- TeleGraM  : {GLOBAL_CHANNEL}", speed=0.03)
     else:
         try: show_res(rsp.json())
-        except: animate_print(f'- FaiLEd ! HTTP : {rsp.status_code}')
+        except: animate_print(f'- FaiLEd ! HTTP : {rsp.status_code}', speed=0.03)
 
 def CancEL(access):
     url = "https://bindcnclcrownx34.vercel.app/cancelbind"
     rsp = requests.get(url, params={'access_token': access})
     if is_success(rsp):
         show_res(rsp.json())
-        animate_print('\033[92m- SuccesFuLy CanceLEd BinD !\033[0m')
+        animate_print('\033[92m- SuccesFuLy CanceLEd BinD !\033[0m', speed=0.03)
     else:
         try: show_res(rsp.json())
-        except: animate_print(f'- FaiLEd ! HTTP : {rsp.status_code}')
+        except: animate_print(f'- FaiLEd ! HTTP : {rsp.status_code}', speed=0.03)
 
 def BinD_NEw(email, access):
     url = "https://bindcnclcrownx34.vercel.app/bind"
@@ -358,23 +382,23 @@ def BinD_NEw(email, access):
         rsp_c = requests.get(url_c, params={'access_token': access, 'email': email, 'otp': otp, 'security_code': sec})
         if is_success(rsp_c):
             show_res(rsp_c.json())
-            animate_print(f'\033[92m- SuccesFuLy AddinG : {email} To AccounT !\033[0m')
+            animate_print(f'\033[92m- SuccesFuLy AddinG : {email} To AccounT !\033[0m', speed=0.03)
         else:
             show_res(rsp_c.json())
     else:
         try: show_res(rsp.json())
-        except: animate_print(f'- FaiLEd ! HTTP : {rsp.status_code}')
+        except: animate_print(f'- FaiLEd ! HTTP : {rsp.status_code}', speed=0.03)
 
 def GeT_PLaFTroms(t):
     r = requests.get("https://100067.connect.garena.com/bind/app/platform/info/get",
       params={'access_token': t},
       headers={'User-Agent':"GarenaMSDK/4.0.19P9(Redmi Note 5 ;Android 9;en;US;)","Connection":"Keep-Alive","Accept-Encoding":"gzip","If-Modified-Since":"Sun, 18 May 2025 09:37:03 GMT"})
     if r.status_code not in[200,201]: 
-        return animate_print("Failed to fetch.")
+        return animate_print("Failed to fetch.", speed=0.03)
     j = r.json()
     m = {3:"Facebook", 8:"Gmail", 10:"iCloud", 5:"VK", 11:"Twitter", 7:"Huawei"}
     b, a = j.get("bounded_accounts",[]), j.get("available_platforms",[])
-    animate_print("\033[97m> SEcondary LinKs : <\033[0m")
+    animate_print("\033[97m> SEcondary LinKs : <\033[0m", speed=0.03)
     l = False
     for x in b:
         try:
@@ -384,19 +408,19 @@ def GeT_PLaFTroms(t):
             e = uinfo.get('email', '')
             n = uinfo.get('nickname', '')
             if p in m:
-                animate_print(f"\n\033[92m=> {m[p]} !\033[0m")
-                if e: animate_print(f"- Email : {e}")
-                if n: animate_print(f"- Email NamE : {n}")
+                animate_print(f"\n\033[92m=> {m[p]} !\033[0m", speed=0.03)
+                if e: animate_print(f"- Email : {e}", speed=0.03)
+                if n: animate_print(f"- Email NamE : {n}", speed=0.03)
                 print()
                 l = True
         except: 
             continue
     if not l: 
-        animate_print("\033[93m=> Secondary Links Not Found ! \033[0m")
+        animate_print("\033[93m=> Secondary Links Not Found ! \033[0m", speed=0.03)
         
     for k in m:
         if k not in a:
-            animate_print(f"\n\033[96m> Main Platform => {m[k]} ! <\033[0m")
+            animate_print(f"\n\033[96m> Main Platform => {m[k]} ! <\033[0m", speed=0.03)
             break
 
 def Revoke_Token(access):
@@ -406,17 +430,18 @@ def Revoke_Token(access):
         rj = rsp.json()
         
         if rj.get("success"):
-            animate_print("\033[92m- SuccEsFuLy RevoKEd AccEss ToKeN !\033[0m")
+            animate_print("\033[92m- SuccEsFuLy RevoKEd AccEss ToKeN !\033[0m", speed=0.03)
         else:
             err = rj.get("error", {}).get("garena_response", {}).get("error", "Unknown")
-            animate_print(f"\033[91m- FaiLEd To RevoKe ! Error : {err}\033[0m")
+            animate_print(f"\033[91m- FaiLEd To RevoKe ! Error : {err}\033[0m", speed=0.03)
             
-        animate_print(f"- DevELopEr : {GLOBAL_MAKER}")
-        animate_print(f"- TeleGraM  : {GLOBAL_CHANNEL}\n")
+        animate_print(f"- DevELopEr : {GLOBAL_MAKER}", speed=0.03)
+        animate_print(f"- TeleGraM  : {GLOBAL_CHANNEL}\n", speed=0.03)
     except:
-        animate_print(f"\033[91m- FaiLEd ! HTTP : {rsp.status_code}\n\033[0m")
+        animate_print(f"\033[91m- FaiLEd ! HTTP : {rsp.status_code}\n\033[0m", speed=0.03)
 
 def MenU():
+    show_welcome_box() 
     fetch_api_credits()
     
     first_run = True
@@ -436,7 +461,7 @@ def MenU():
         else:
             display_banner(with_animation=False)
         
-        # অপশন লস্ট
+        # Options List
         print(f" {G}[1]{X} - Bind ChangE")
         print(f" {G}[2]{X} - UnBinD EmaiL")
         print(f" {G}[3]{X} - ChEcK BinD InFo")
@@ -478,9 +503,10 @@ def MenU():
             system('clear')
             exit(f'{R}- ExiTing !{X}')
         else:
-            animate_print(f'{R}- No ChoosinG !{X}')
+            animate_print(f'{R}- No ChoosinG !{X}', speed=0.03)
             
         input(f'\n{Y}- PrEss EnTer To REturn To Main MEnu...{X}')
 
 if __name__ == "__main__":
     MenU()
+                                                                                                              
