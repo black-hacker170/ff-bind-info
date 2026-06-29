@@ -172,7 +172,7 @@ def handle_query(call):
         email = user_data.get("email")
         
         if not email:
-            text = "📧 *Temp Mail Bot* - Your privacy is our priority.\n\nআপনি এখনো কোনো ইমেইল জেনারেট করেননি। নিচের বাটনে চাপ দিয়ে ইমেইল তৈরি করুন।"
+            text = "📧 *Temp Mail Bot* - Your privacy is our priority.\n\nআপনি এখনো কোনো ইমেইল জেনারেট করেননি। নিচের বাটনে চাপ দিয়ে ইমেইল তৈরি করুন।"
             markup = types.InlineKeyboardMarkup()
             markup.add(types.InlineKeyboardButton("✨ Generate Email", callback_data="tm_generate"))
             markup.add(types.InlineKeyboardButton("🏠 Main Menu", callback_data="back_main"))
